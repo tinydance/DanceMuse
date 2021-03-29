@@ -76,6 +76,18 @@ def extract_acoustic_feature(input_audio_dir):
 
     return musics
 
+def align(musics):
+    print('---------- Align the frames of music ----------')
+    new_musics=[]
+    for i in range(len(musics)):
+        min_seq_len = len(musics[i])
+        print(f'music -> {np.array(musics[i]).shape}, ' +
+              f'min_seq_len -> {min_seq_len}')
+        del musics[i][min_seq_len:]
+        new_musics.append([musics[i][j] for j in range(min_seq_len) if j%2==0])
+        new_musics.append([musics[i][j] for j in range(min_seq_len) if j%2==1])
+    return new_musics
+
 def save(args, musics):
     print('---------- Save to text file ----------')
     fnames = sorted(os.listdir(args.input_audio_dir))
@@ -83,25 +95,21 @@ def save(args, musics):
     print(fnames)
     print(len(fnames))
     print(len(musics))
-    assert len(fnames) == len(musics), 'alignment'
-
-    # train_idx, valid_idx = split_data(fnames)
-    # train_idx = sorted(train_idx)
-    # print(f'train ids: {[fnames[idx] for idx in train_idx]}')
-    # valid_idx = sorted(valid_idx)
-    # print(f'valid ids: {[fnames[idx] for idx in valid_idx]}')
+    assert len(fnames)*2 == len(musics), 'alignment'
 
     print('---------- test data ----------')
-    for idx,fname in enumerate(fnames):
-        fn = os.path.splitext(fname)[0]
-        with open(os.path.join(args.test_dir, f'{fn}.json'), 'w') as f:
-            sample_dict = {
-                'id': fnames[idx],
-                'music_array': musics[idx],
-            }
-            json.dump(sample_dict, f)
+    for idx,x in enumerate(fnames):
+        for i in range(2):
+            fname = os.path.splitext(fnames[idx])[0]
+            with open(os.path.join(args.test_dir, f'{fname+"_"+str(i)}.json'), 'w') as f:
+                sample_dict = {
+                    'id': fnames[idx]+"_"+str(i),
+                    'music_array': musics[idx*2+i],
+                }
+                json.dump(sample_dict, f)
 
 
 if __name__ == '__main__':
     musics = extract_acoustic_feature(args.input_audio_dir)
+    musics = align(musics)
     save(args, musics)
