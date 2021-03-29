@@ -19,6 +19,7 @@ class DiagonaledMM(torch.autograd.Function):
         dtype: str in ['float64', 'float32', 'float16']
         device: str in ['cpu' or 'cuda']
         b0, b1, b2: size of tensor tiles. Very important for good performance
+
         '''
         import tvm  # import the full tvm library here for compilation. Don't import at the top of the file in case we don't need to compile
         from tvm.contrib import nvcc
@@ -231,7 +232,7 @@ class DiagonaledMM(torch.autograd.Function):
     @staticmethod
     def forward(ctx, t1: torch.Tensor, t2: torch.Tensor, w: int, d: Union[torch.Tensor,int], is_t1_diagonaled: bool = False, padding: int = 0, autoregressive: bool = False) -> torch.Tensor:
         '''Compuates diagonal_mm of t1 and t2.
-        args:
+        args: 
         t1: torch.Tensor = (batch_size, seq_len, num_attention_heads, hidden_size|number_of_diagonals).
             t1 can be a regular tensor (e.g. `query_layer`) or a diagonaled one (e.g. `attention_scores`)
         t2: torch.Tensor = (batch_size, seq_len, num_attention_heads, hidden_size). This is always a non-diagonaled

@@ -69,6 +69,11 @@ cd $source_dir
 ##############
 echo "<--Running Model-->"
 json_dir="test_output/outputs.test.json"
+
+export CUDA_HOME="/usr/local/cuda-10.0"
+export PATH="$PATH:/usr/local/cuda-10.0/bin"
+export LD_LIBRARY_PATH="/usr/local/cuda-10.0/lib64"
+export PATH="$PATH:/usr/local/bin/conda"
 /zooper2/tinydancer/DanceRevolution/bin/python test2.py --input_dir ${test_audio} \
 	--model ${model} \
 	--json_dir ${json_dir} \

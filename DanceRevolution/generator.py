@@ -9,8 +9,10 @@ class Generator(object):
     """ Load with trained model """
     def __init__(self, model_file, device):
         self.device = device
-
-        checkpoint = torch.load(model_file)
+        if str(device) == 'cpu':
+            checkpoint = torch.load(model_file, map_location=torch.device('cpu'))   
+        else:
+            checkpoint = torch.load(model_file)
         model_args = checkpoint['args']
         self.model_args = model_args
         print(f'[Info] Loading model args:')
