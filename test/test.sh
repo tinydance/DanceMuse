@@ -3,15 +3,15 @@
 #######################
 ## Default variables ##
 #######################
+echo "<--Initializing Variables and Directories-->"
 # input_dir="/zooper2/tinydancer/DanceRevolution/test_model/raw_audio/"
 work_dir="/zooper2/tinydancer/DanceRevolution/"
 duration="60"
-fps="15"
+fps="30"
 
 #############################
 ## User Inputted Variables ##
 #############################
-
 while getopts i:m:p: flag
 do
 	case "${flag}" in
@@ -20,10 +20,6 @@ do
 		p) prefix=${OPTARG};;
 	esac
 done
-
-###################
-## Preprocessing ##
-###################
 
 #make dirs if they don't exist
 mkdir -p edited_audio
@@ -36,7 +32,10 @@ test_output="${work_dir}test_model/test_output"
 edited_output="${work_dir}test_model/edited_output"
 image_dir="${work_dir}test_model/test_output/outputs.test.images"
 
-
+###################
+## Preprocessing ##
+###################
+echo "<--Preprocessing Audio File-->"
 #Iterate over the videos in the input directory
 for audio in ${input_dir}/${prefix}*
 do
@@ -58,22 +57,21 @@ do
 		-t "${duration}"\
 		"${new_audio}"
 done
-
+echo "<--Extracting Audio Features-->"
 python prepro_test.py --input_audio_dir "${edited_audio}" \
 	--test_dir "${test_audio}"
 
 ##############
 # Run Model ##
 ##############
-
-# sbatch --export=ALL,model='${model}' test_model/slurm.sh
+echo "<--Running Model-->"
 sbatch -W test_model/slurm.sh
 wait
 
 ####################
 ## Postprocessing ##
 ####################
-
+echo "<--Merging Images into MP4-->"
 # merge jpgs into mp4
 dances=$(ls -d1 ${image_dir}/${prefix}* )
 # echo "$dances"
@@ -85,19 +83,25 @@ do
 	echo "Created ${test_output}/${filename}.mp4"
 done
 
+echo "<--Adding M4A to MP4-->"
 # Recombine m4a's to mp4's
 for dance in ${test_output}/${prefix}*.mp4
 do
 	filename="$(basename -s .mp4 $dance)"
-	audio="${edited_audio}/$filename.m4a"
+	echo "${filename}"
+	audio_filename=${filename%??}
+	audio="${edited_audio}/$audio_filename.m4a"
+	echo "${audio}"
 	ffmpeg -i $dance -i $audio -c copy -map 0:v:0 -map 1:a:0 "${edited_output}/${filename}_with_audio.mp4"
 done
 
+echo "<--Testing Process Complete-->"
+
 # Remove intermediary files
 # rm ${edited_audio}/*.m4a
-# rm ${test_audio}/*.m4a
+# rm ${test_audio}/*.json
 # rm -r ${test_output}/outputs.test.images/*
 # rm -r ${test_output}/outputs.test.json/*
 # rm ${test_output}/*.mp4
 
-exit
+# exit

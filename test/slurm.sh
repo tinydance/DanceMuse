@@ -23,7 +23,7 @@ image_dir="test_model/test_output/outputs.test.images"
 json_dir="test_model/test_output/outputs.test.json"
 input_dir="test_model/test_audio"
 output_dir="test_model/test_output"
-model="trained_models/hiphop/epoch_4000_h1.pt"
+model="trained_models/full_model/epoch_4000.pt"
 	
 /zooper2/tinydancer/DanceRevolution/bin/python test2.py --input_dir ${input_dir} \
 	--model ${model} \
