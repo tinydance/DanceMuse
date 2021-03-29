@@ -6,6 +6,7 @@
 echo "<--Initializing Variables and Directories-->"
 # input_dir="/zooper2/tinydancer/DanceRevolution/test_model/raw_audio/"
 work_dir="/zooper2/tinydancer/DanceMuse/test"
+source_dir="/zooper2/tinydancer/DanceRevolution"
 duration="60"
 fps="30"
 model="/zooper2/tinydancer/DanceRevolution/trained_models/full_model/epoch_4000.pt"
@@ -59,6 +60,7 @@ do
 		"${new_audio}"
 done
 echo "<--Extracting Audio Features-->"
+cd $source_dir
 /zooper2/tinydancer/DanceRevolution/bin/python prepro_test.py --input_audio_dir "${edited_audio}" \
 	--test_dir "${test_audio}"
 
@@ -71,7 +73,8 @@ json_dir="test_output/outputs.test.json"
 	--model ${model} \
 	--json_dir ${json_dir} \
 	--image_dir ${image_dir} \
-	--batch_size 1
+	--batch_size 1 \
+	--cuda False
 
 ####################
 ## Postprocessing ##
