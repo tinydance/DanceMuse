@@ -20,7 +20,7 @@ class Generator(object):
         decoder = Decoder(model_args)
         model = Model(encoder, decoder, model_args, device=device)
 
-        model = nn.DataParallel(model)
+        # model = nn.DataParallel(model)
         model.load_state_dict(checkpoint['model'])
         # self.log.log.info('[Info] Trained model loaded.')
         print('[Info] Trained model loaded.')

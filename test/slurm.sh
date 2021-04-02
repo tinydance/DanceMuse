@@ -26,7 +26,7 @@ input_dir="${work_dir}/test_audio"
 output_dir="${work_dir}/test_output"
 model="/zooper2/tinydancer/DanceRevolution/trained_models/full_model/epoch_10000.pt"
 	
-/zooper2/tinydancer/DanceRevolution/bin/python test2.py --input_dir ${input_dir} \
+/zooper2/tinydancer/DanceRevolution/bin/python "/zooper2/tinydancer/DanceRevolution/test2.py"  --input_dir ${input_dir} \
 	--model ${model} \
 	--json_dir ${json_dir} \
 	--image_dir ${image_dir} \

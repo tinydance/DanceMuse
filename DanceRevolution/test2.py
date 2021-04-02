@@ -142,7 +142,6 @@ def main():
         args.input_dir, interval=None, data_type=args.data_type)
 
     device = torch.device('cuda' if args.cuda else 'cpu')
-    print("Device: " + str(device))
 
     test_loader = torch.utils.data.DataLoader(
         DanceDataset_Test(music_data),
