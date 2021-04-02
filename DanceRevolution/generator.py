@@ -9,13 +9,10 @@ class Generator(object):
     """ Load with trained model """
     def __init__(self, model_file, device):
         self.device = device
-        if str(device) == 'cpu':
-            checkpoint = torch.load(model_file, map_location=torch.device('cpu'))   
-        else:
-            checkpoint = torch.load(model_file)
+
+        checkpoint = torch.load(model_file)
         model_args = checkpoint['args']
         self.model_args = model_args
-        model_args.cuda = False
         print(f'[Info] Loading model args:')
         printer(model_args)
 
@@ -23,8 +20,7 @@ class Generator(object):
         decoder = Decoder(model_args)
         model = Model(encoder, decoder, model_args, device=device)
 
-        # model = nn.DataParallel(model)
-        model = model.to(device)
+        model = nn.DataParallel(model)
         model.load_state_dict(checkpoint['model'])
         # self.log.log.info('[Info] Trained model loaded.')
         print('[Info] Trained model loaded.')
@@ -41,17 +37,17 @@ class Generator(object):
             bsz, src_seq_len, _ = src_seq.size()
             generated_frames_num = src_seq_len
 
-            hidden, dec_output = self.model.init_decoder_hidden(bsz)
+            hidden, dec_output = self.model.module.init_decoder_hidden(bsz)
             vec_h, vec_c = hidden
 
-            enc_outputs, *_ = self.model.encoder(src_seq, src_pos)
+            enc_outputs, *_ = self.model.module.encoder(src_seq, src_pos)
 
             preds = []
             for i in range(generated_frames_num):
                 dec_input = dec_output
-                dec_output, vec_h, vec_c = self.model.decoder(dec_input, vec_h, vec_c)
+                dec_output, vec_h, vec_c = self.model.module.decoder(dec_input, vec_h, vec_c)
                 dec_output = torch.cat([dec_output, enc_outputs[:, i]], 1)
-                dec_output = self.model.linear(dec_output)
+                dec_output = self.model.module.linear(dec_output)
                 preds.append(dec_output)
 
         outputs = [z.unsqueeze(1) for z in preds]

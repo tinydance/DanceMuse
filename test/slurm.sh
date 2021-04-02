@@ -19,11 +19,12 @@ export PATH="$PATH:/usr/local/cuda-10.0/bin"
 export LD_LIBRARY_PATH="/usr/local/cuda-10.0/lib64"
 export PATH="$PATH:/usr/local/bin/conda"
 
-image_dir="test_model/test_output/0402.outputs.test.images"
-json_dir="test_model/test_output/0402.outputs.test.json"
-input_dir="test_model/test_audio"
-output_dir="test_model/test_output"
-model="trained_models/full_model/epoch_10000.pt"
+work_dir="/zooper2/tinydancer/DanceMuse/test"
+image_dir="${work_dir}/test_output/0402.outputs.test.images"
+json_dir="${work_dir}/test_output/0402.outputs.test.json"
+input_dir="${work_dir}/test_audio"
+output_dir="${work_dir}/test_output"
+model="/zooper2/tinydancer/DanceRevolution/trained_models/full_model/epoch_10000.pt"
 	
 /zooper2/tinydancer/DanceRevolution/bin/python test2.py --input_dir ${input_dir} \
 	--model ${model} \
