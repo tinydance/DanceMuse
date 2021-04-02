@@ -15,6 +15,7 @@ class Generator(object):
             checkpoint = torch.load(model_file)
         model_args = checkpoint['args']
         self.model_args = model_args
+        model_args.cuda = False
         print(f'[Info] Loading model args:')
         printer(model_args)
 

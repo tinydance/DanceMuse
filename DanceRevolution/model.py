@@ -4,7 +4,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from utils.pose import BOS_POSE
-from longformer.longformers import LongformerSelfAttention, LongformerConfig
+from longformer.longformer import LongformerSelfAttention, LongformerConfig
 print("after torch")
 
 def get_sinusoid_encoding_table(n_position, d_hid, padding_idx=None):

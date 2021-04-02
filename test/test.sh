@@ -5,7 +5,8 @@
 #######################
 echo "<--Initializing Variables and Directories-->"
 # input_dir="/zooper2/tinydancer/DanceRevolution/test_model/raw_audio/"
-work_dir="/zooper2/tinydancer/DanceRevolution/"
+work_dir="/zooper2/tinydancer/DanceMuse/test"
+source_dir="/zooper2/tinydancer/DanceMuse/DanceRevolution"
 duration="60"
 fps="30"
 
@@ -26,11 +27,11 @@ mkdir -p edited_audio
 mkdir -p test_audio
 mkdir -p test_output
 mkdir -p edited_output
-edited_audio="${work_dir}test_model/edited_audio"
-test_audio="${work_dir}test_model/test_audio"
-test_output="${work_dir}test_model/test_output"
-edited_output="${work_dir}test_model/edited_output"
-image_dir="${work_dir}test_model/test_output/outputs.test.images"
+edited_audio="${work_dir}/edited_audio"
+test_audio="${work_dir}/test_audio"
+test_output="${work_dir}/test_output"
+edited_output="${work_dir}/edited_output"
+image_dir="${work_dir}/test_output/0402.outputs.test.images"
 
 ###################
 ## Preprocessing ##
@@ -58,16 +59,16 @@ do
 		"${new_audio}"
 done
 echo "<--Extracting Audio Features-->"
-python prepro_test.py --input_audio_dir "${edited_audio}" \
+cd $source_dir
+/zooper2/tinydancer/DanceRevolution/bin/python prepro_test.py --input_audio_dir "${edited_audio}" \
 	--test_dir "${test_audio}"
 
 ##############
 # Run Model ##
 ##############
 echo "<--Running Model-->"
-sbatch -W test_model/slurm.sh
+sbatch -W ../test/slurm.sh
 wait
-
 ####################
 ## Postprocessing ##
 ####################
