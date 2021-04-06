@@ -60,7 +60,7 @@ do
 done
 echo "<--Extracting Audio Features-->"
 cd $source_dir
-/zooper2/tinydancer/DanceRevolution/bin/python prepro_test.py --input_audio_dir "${edited_audio}" \
+/zooper2/tinydancer/DanceRevolution/bin/python prepro_test2.py --input_audio_dir "${edited_audio}" \
 	--test_dir "${test_audio}"
 
 ##############
