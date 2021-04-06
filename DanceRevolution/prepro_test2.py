@@ -76,6 +76,7 @@ def extract_acoustic_feature(input_audio_dir):
 
     return musics
 
+
 def align(musics):
     print('---------- Align the frames of music ----------')
     new_musics=[]
@@ -84,29 +85,37 @@ def align(musics):
         print(f'music -> {np.array(musics[i]).shape}, ' +
               f'min_seq_len -> {min_seq_len}')
         del musics[i][min_seq_len:]
+
         new_musics.append([musics[i][j] for j in range(min_seq_len) if j%3==0])
+
     return new_musics
+
+
+def split_data(fnames):
+    print('---------- Split data into train and valid ----------')
+    indices = list(range(len(fnames)))
+    random.shuffle(indices)
+    train = indices[10:]
+    valid = indices[:10]
+
+    return train, valid
+
 
 def save(args, musics):
     print('---------- Save to text file ----------')
     fnames = sorted(os.listdir(args.input_audio_dir))
     #fnames = fnames[:70]
     print(fnames)
-    print(len(fnames))
-    print(len(musics))
     assert len(fnames)*2 == len(musics), 'alignment'
 
     print('---------- test data ----------')
     for idx,x in enumerate(fnames):
-        for i in range(2):
-            fname = os.path.splitext(fnames[idx])[0]
-            with open(os.path.join(args.test_dir, f'{fname+"_"+str(i)}.json'), 'w') as f:
-                sample_dict = {
-                    'id': fnames[idx]+"_"+str(i),
-                    'music_array': musics[idx*2+i],
-                }
-                json.dump(sample_dict, f)
-
+        with open(os.path.join(args.test_dir, f'{fnames[idx]}.json'), 'w') as f:
+            sample_dict = {
+                'id': fnames[idx],
+                'music_array': musics[idx],
+            }
+            json.dump(sample_dict, f)
 
 if __name__ == '__main__':
     musics = extract_acoustic_feature(args.input_audio_dir)

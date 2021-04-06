@@ -90,7 +90,7 @@ for dance in ${test_output}/${prefix}*.mp4
 do
 	filename="$(basename -s .mp4 $dance)"
 	echo "${filename}"
-	audio_filename=${filename%??}
+	audio_filename=${filename}
 	audio="${edited_audio}/$audio_filename.m4a"
 	echo "${audio}"
 	ffmpeg -i $dance -i $audio -c copy -map 0:v:0 -map 1:a:0 "${edited_output}/${filename}_with_audio.mp4"

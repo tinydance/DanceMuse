@@ -1,32 +1,35 @@
 import os
-import sys
 import json
 import random
 import argparse
 import essentia
 import essentia.streaming
 from essentia.standard import *
-import librosa
 import numpy as np
 from extractor import FeatureExtractor
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--input_audio_dir', type=str, default='data/audio')
-parser.add_argument('--input_dance_dir', type=str, default='data/json')
-
-parser.add_argument('--train_dir', type=str, default='data/train_1min')
-parser.add_argument('--valid_dir', type=str, default='data/valid_1min')
-
+parser.add_argument('--input_audio_dir', type=str, default='./data/audio/pop_1min')
+parser.add_argument('--input_dance_dir', type=str, default='./data/json/pop_1min')
+parser.add_argument('--train_dir', type=str, default='data/train5j')
+parser.add_argument('--valid_dir', type=str, default='data/valid5j')
 parser.add_argument('--sampling_rate', type=int, default=15360)
 args = parser.parse_args()
-
-extractor = FeatureExtractor()
 
 if not os.path.exists(args.train_dir):
     os.mkdir(args.train_dir)
 if not os.path.exists(args.valid_dir):
     os.mkdir(args.valid_dir)
 
+extractor = FeatureExtractor()
+
+
+def convert2fps30(np_arr):
+    dim, seq_len = np_arr.shape
+    tmp = np_arr.reshape(-1)[:dim * 3 * (seq_len // 3)]
+    np_arr = tmp.reshape(dim * 3, seq_len // 3)
+    print(f'FPS 30 -> {np_arr.shape}')
+    return np_arr
 
 
 def extract_acoustic_feature(input_audio_dir):
@@ -34,15 +37,11 @@ def extract_acoustic_feature(input_audio_dir):
     musics = []
     # onset_beats = []
     audio_fnames = sorted(os.listdir(input_audio_dir))
-    # audio_fnames = audio_fnames[:20]  # for debug
-    print(f'audio_fnames: {audio_fnames}')
-
     for audio_fname in audio_fnames:
         audio_file = os.path.join(input_audio_dir, audio_fname)
         print(f'Process -> {audio_file}')
         ### load audio ###
         sr = args.sampling_rate
-        # sr = 48000
         loader = essentia.standard.MonoLoader(filename=audio_file, sampleRate=sr)
         audio = loader()
         audio = np.array(audio).T
@@ -83,24 +82,20 @@ def extract_acoustic_feature(input_audio_dir):
         feature = feature.transpose(1, 0)
         print(f'acoustic feature -> {feature.shape}')
         musics.append(feature.tolist())
-    
 
     return musics
+
 
 def load_dance_data(dance_dir, remove_hand_keypoints=True, remove_face_keypoints=True):
     print('---------- Loading pose keypoints ----------')
     dances = []
     dir_names = sorted(os.listdir(dance_dir))
-    # dir_names = dir_names[:20]  # for debug
-    print(f'dance dir names: {dir_names}')
-
     for dir_name in dir_names:
         poses = []
         prev_key_points = None
         pose_path = os.path.join(dance_dir, dir_name)
         print(f'Process -> {pose_path}')
         json_files = sorted(os.listdir(pose_path))
-
         for i, json_file in enumerate(json_files):
             with open(os.path.join(pose_path, json_file)) as f:
                 keypoint_dicts = json.loads(f.read())['people']
@@ -114,18 +109,10 @@ def load_dance_data(dance_dir, remove_hand_keypoints=True, remove_face_keypoints
                     hand_points_r = np.array(keypoint_dict["hand_right_keypoints_2d"]).reshape(21, 3)[:, :-1].reshape(-1) \
                         if not remove_hand_keypoints else []
                     key_points = np.concatenate([pose_points, face_points, hand_points_l, hand_points_r], 0)
-                    # if i == 0:
-                    #     relative_points = np.zeros(key_points.size)
-                    # else:
-                    #     relative_points = key_points - prev_key_points
-                    # prev_key_points = key_points
-                    # poses.append(relative_points.tolist())
                     poses.append(key_points.tolist())
         dances.append(poses)
-        print(np.shape(poses))
 
     return dances
-
 
 
 def align(musics, dances):
@@ -141,13 +128,15 @@ def align(musics, dances):
               f'min_seq_len -> {min_seq_len}')
         del musics[i][min_seq_len:]
         del dances[i][min_seq_len:]
-        new_musics.append([musics[i][j] for j in range(min_seq_len) if j%2==0])
-        new_musics.append([musics[i][j] for j in range(min_seq_len) if j%2==1])
-        
-        new_dances.append([dances[i][j] for j in range(min_seq_len) if j%2==0])
-        new_dances.append([dances[i][j] for j in range(min_seq_len) if j%2==1])
-    return new_musics, new_dances
 
+        new_musics.append([musics[i][j] for j in range(min_seq_len) if j%3==0])
+#        new_musics.append([musics[i][j] for j in range(min_seq_len) if j%3==1])
+#        new_musics.append([musics[i][j] for j in range(min_seq_len) if j%3==2])
+        new_dances.append([dances[i][j] for j in range(min_seq_len) if j%3==0])
+#        new_dances.append([dances[i][j] for j in range(min_seq_len) if j%3==1])
+#        new_dances.append([dances[i][j] for j in range(min_seq_len) if j%3==2])
+
+    return new_musics, new_dances
 
 
 def split_data(fnames):
@@ -157,15 +146,13 @@ def split_data(fnames):
     train = indices[10:]
     valid = indices[:10]
 
-
     return train, valid
 
 
-def save(args, musics, dances, inner_dir):
+def save(args, musics, dances):
     print('---------- Save to text file ----------')
-    fnames = sorted(os.listdir(os.path.join(args.input_dance_dir,inner_dir)))
-    # fnames = fnames[:20]  # for debug
-    assert len(fnames)*2 == len(musics) == len(dances), 'alignment'
+    fnames = sorted(os.listdir(args.input_dance_dir))
+    assert len(fnames) == len(musics) == len(dances), 'alignment'
 
     train_idx, valid_idx = split_data(fnames)
     train_idx = sorted(train_idx)
@@ -174,41 +161,31 @@ def save(args, musics, dances, inner_dir):
     print(f'valid ids: {[fnames[idx] for idx in valid_idx]}')
 
     print('---------- train data ----------')
-
     for idx in train_idx:
-        for i in range(2):
-            with open(os.path.join(args.train_dir, f'{inner_dir+"_"+fnames[idx]+"_"+str(i)}.json'), 'w') as f:
-                sample_dict = {
-                    'id': fnames[idx]+"_"+str(i),
-                    'music_array': musics[idx*2+i],
-                    'dance_array': dances[idx*2+i]
-                }
-                json.dump(sample_dict, f)
+        with open(os.path.join(args.train_dir, f'{fnames[idx]}.json'), 'w') as f:
+            sample_dict = {
+                'id': fnames[idx],
+                'music_array': musics[idx],
+                'dance_array': dances[idx]
+            }
+            json.dump(sample_dict, f)
 
     print('---------- valid data ----------')
     for idx in valid_idx:
-        for i in range(2):
-            with open(os.path.join(args.valid_dir, f'{inner_dir+"_"+fnames[idx]+"_"+str(i)}.json'), 'w') as f:
-                sample_dict = {
-                    'id': fnames[idx]+"_"+str(i),
-                    'music_array': musics[idx*2+i],
-                    'dance_array': dances[idx*2+i]
-                }
-                json.dump(sample_dict, f)
-
+        with open(os.path.join(args.valid_dir, f'{fnames[idx]}.json'), 'w') as f:
+            sample_dict = {
+                'id': fnames[idx],
+                'music_array': musics[idx],
+                'dance_array': dances[idx]
+            }
+            json.dump(sample_dict, f)
 
 
 if __name__ == '__main__':
-    music_dirs = os.listdir(args.input_audio_dir)
-    dance_dirs = os.listdir(args.input_dance_dir)
-    for music_dir in music_dirs:
-        if music_dir in dance_dirs and music_dir != ".DS_Store":
-      
-            musics = extract_acoustic_feature(os.path.join(args.input_audio_dir, music_dir))
-            print("After Music")
-            dances = load_dance_data(os.path.join(args.input_dance_dir, music_dir),
+    musics = extract_acoustic_feature(args.input_audio_dir)
+    dances = load_dance_data(args.input_dance_dir,
                              remove_face_keypoints=False,
                              remove_hand_keypoints=False)
-            print("dances")
-            musics, dances = align(musics, dances)
-            save(args, musics, dances, music_dir)
+    musics, dances = align(musics, dances)
+    save(args, musics, dances)
+
