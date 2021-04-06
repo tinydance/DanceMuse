@@ -31,7 +31,7 @@ edited_audio="${work_dir}/edited_audio"
 test_audio="${work_dir}/test_audio"
 test_output="${work_dir}/test_output"
 edited_output="${work_dir}/edited_output"
-image_dir="${work_dir}/test_output/0405.outputs.test.images"
+image_dir="${work_dir}/test_output/0405-2.outputs.test.images"
 
 ###################
 ## Preprocessing ##
