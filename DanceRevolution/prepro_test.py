@@ -93,7 +93,7 @@ def save(args, musics):
     fnames = sorted(os.listdir(args.input_audio_dir))
     #fnames = fnames[:70]
     print(fnames)
-    assert len(fnames)*2 == len(musics), 'alignment'
+    assert len(fnames) == len(musics), 'alignment'
 
     print('---------- test data ----------')
     for idx,x in enumerate(fnames):

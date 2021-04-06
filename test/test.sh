@@ -42,7 +42,6 @@ for audio in ${input_dir}/${prefix}*
 do
 	# Print progress
 	echo "Processing ${audio}..."
-
 	# Edit the video:
 	#   *Don't overwrite mod files that exist
 	#   *show warnings
@@ -69,9 +68,9 @@ cd $source_dir
 echo "<--Running Model-->"
 sbatch -W ../test/slurm.sh
 wait
-####################
-## Postprocessing ##
-####################
+###################
+# Postprocessing ##
+###################
 echo "<--Merging Images into MP4-->"
 # merge jpgs into mp4
 dances=$(ls -d1 ${image_dir}/${prefix}* )
