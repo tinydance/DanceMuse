@@ -79,7 +79,7 @@ for dance in ${dances}
 do
 	echo "Name of dance: $dance"
 	filename="$(basename -s .mp4 $dance)"
-	ffmpeg -r 15 -i ${dance}/frame%06d.jpg -vb 20M -vcodec mpeg4 -y ${test_output}/${filename}.mp4
+	ffmpeg -r "${fps}" -i ${dance}/frame%06d.jpg -vb 20M -vcodec mpeg4 -y ${test_output}/${filename}.mp4
 	echo "Created ${test_output}/${filename}.mp4"
 done
 
