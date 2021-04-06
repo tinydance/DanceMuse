@@ -110,7 +110,8 @@ def save(args, musics):
 
     print('---------- test data ----------')
     for idx,x in enumerate(fnames):
-        with open(os.path.join(args.test_dir, f'{fnames[idx]}.json'), 'w') as f:
+        fname = os.path.splitext(fnames[idx])[0]
+        with open(os.path.join(args.test_dir, f'{fname}.json'), 'w') as f:
             sample_dict = {
                 'id': fnames[idx],
                 'music_array': musics[idx],
