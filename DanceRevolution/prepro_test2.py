@@ -86,7 +86,8 @@ def align(musics):
               f'min_seq_len -> {min_seq_len}')
         del musics[i][min_seq_len:]
 
-        new_musics.append([musics[i][j] for j in range(min_seq_len) if j%3==0])
+        new_musics.append([musics[i][j] for j in range(min_seq_len)])
+
 
     return new_musics
 
