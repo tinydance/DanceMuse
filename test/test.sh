@@ -36,52 +36,52 @@ image_dir="${work_dir}/test_output/0407-2k.outputs.test.images"
 ###################
 ## Preprocessing ##
 ###################
-echo "<--Preprocessing Audio File-->"
-#Iterate over the videos in the input directory
-for audio in ${input_dir}/${prefix}*
-do
-	# Print progress
-	echo "Processing ${audio}..."
-	# Edit the video:
-	#   *Don't overwrite mod files that exist
-	#   *show warnings
-	#   *force fps to  $fps
-	#   *set video duration to $duration seconds
-	#   *output into a filename_mod.mp4 file
-	filename="${audio##*/}"
-	new_audio="${edited_audio}/${filename%.*}.m4a"
-	ffmpeg 	-n\
-		-loglevel 24\
-		-i "${audio}"\
-		-r "${fps}"\
-		-t "${duration}"\
-		"${new_audio}"
-done
-echo "<--Extracting Audio Features-->"
-cd $source_dir
-/zooper2/tinydancer/DanceRevolution/bin/python prepro_test2.py --input_audio_dir "${edited_audio}" \
-	--test_dir "${test_audio}"
+# echo "<--Preprocessing Audio File-->"
+# #Iterate over the videos in the input directory
+# for audio in ${input_dir}/${prefix}*
+# do
+# 	# Print progress
+# 	echo "Processing ${audio}..."
+# 	# Edit the video:
+# 	#   *Don't overwrite mod files that exist
+# 	#   *show warnings
+# 	#   *force fps to  $fps
+# 	#   *set video duration to $duration seconds
+# 	#   *output into a filename_mod.mp4 file
+# 	filename="${audio##*/}"
+# 	new_audio="${edited_audio}/${filename%.*}.m4a"
+# 	ffmpeg 	-n\
+# 		-loglevel 24\
+# 		-i "${audio}"\
+# 		-r "${fps}"\
+# 		-t "${duration}"\
+# 		"${new_audio}"
+# done
+# echo "<--Extracting Audio Features-->"
+# cd $source_dir
+# /zooper2/tinydancer/DanceRevolution/bin/python prepro_test2.py --input_audio_dir "${edited_audio}" \
+# 	--test_dir "${test_audio}"
 
 ##############
 # Run Model ##
 ##############
-echo "<--Running Model-->"
-sbatch -W ../test/slurm.sh
-wait
-###################
-# Postprocessing ##
-###################
-echo "<--Merging Images into MP4-->"
-# merge jpgs into mp4
-dances=$(ls -d1 ${image_dir}/${prefix}* )
-# echo "$dances"
-for dance in ${dances}
-do
-	echo "Name of dance: $dance"
-	filename="$(basename -s .mp4 $dance)"
-	ffmpeg -r "${fps}" -i ${dance}/frame%06d.jpg -vb 20M -vcodec mpeg4 -y ${test_output}/${filename}.mp4
-	echo "Created ${test_output}/${filename}.mp4"
-done
+# echo "<--Running Model-->"
+# sbatch -W ../test/slurm.sh
+# wait
+# ###################
+# # Postprocessing ##
+# ###################
+# echo "<--Merging Images into MP4-->"
+# # merge jpgs into mp4
+# dances=$(ls -d1 ${image_dir}/${prefix}* )
+# # echo "$dances"
+# for dance in ${dances}
+# do
+# 	echo "Name of dance: $dance"
+# 	filename="$(basename -s .mp4 $dance)"
+# 	ffmpeg -r "${fps}" -i ${dance}/frame%06d.jpg -vb 20M -vcodec mpeg4 -y ${test_output}/${filename}.mp4
+# 	echo "Created ${test_output}/${filename}.mp4"
+# done
 
 echo "<--Adding M4A to MP4-->"
 # Recombine m4a's to mp4's

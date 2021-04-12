@@ -1,0 +1,3 @@
+[submodule "DR-NEW"]
+	path = DR-NEW
+	url = https://github.com/stonyhu/DanceRevolution.git
