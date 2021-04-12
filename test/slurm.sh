@@ -24,7 +24,7 @@ image_dir="${work_dir}/test_output/0407-2k.outputs.test.images"
 json_dir="${work_dir}/test_output/0407-2k.outputs.test.json"
 input_dir="${work_dir}/test_audio"
 output_dir="${work_dir}/test_output"
-model="/zooper2/tinydancer/DanceRevolution/trained_models/jpop_0405/epoch_2000.pt"
+model="/zooper2/tinydancer/DanceRevolution/trained_models/jpop_0405/epoch_6000.pt"
 	
 /zooper2/tinydancer/DanceRevolution/bin/python "/zooper2/tinydancer/DanceRevolution/test2.py"  --input_dir ${input_dir} \
 	--model ${model} \
