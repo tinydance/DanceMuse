@@ -15,8 +15,10 @@ import numpy as np
 from extractor import FeatureExtractor
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--input_audio_dir', type=str, default='data/hiphop_1min')
-parser.add_argument('--input_dance_dir', type=str, default='data/json/hiphop_1min')
+audio_dir="/zooper2/tinydancer/DanceRevolution/data/audio/hiphop_1min"
+json_dir="/zooper2/tinydancer/DanceRevolution/data/json/hiphop_1min"
+parser.add_argument('--input_audio_dir', type=str, default=audio_dir)
+parser.add_argument('--input_dance_dir', type=str, default=json_dir)
 
 parser.add_argument('--train_dir', type=str, default='data/train_1min')
 parser.add_argument('--test_dir', type=str, default='data/test_1min')
