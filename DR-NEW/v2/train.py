@@ -167,7 +167,7 @@ def main():
     # model = nn.DataParallel(model).to(device)
 
     optimizer = optim.Adam(filter(
-        lambda x: x.requires_grad, model.module.parameters()), lr=args.lr)
+        lambda x: x.requires_grad, model.parameters()), lr=args.lr)
 
     train(model, training_data, optimizer, device, args, log)
 
