@@ -37,7 +37,7 @@ def train(model, training_data, optimizer, device, args, log):
             src_pos = src_pos[:, :-1]
             tgt_seq = tgt_seq[:, :-1]
 
-            hidden, out_frame, out_seq = model.module.init_decoder_hidden(tgt_seq.size(0))
+            hidden, out_frame, out_seq = model.init_decoder_hidden(tgt_seq.size(0))
 
             # forward
             optimizer.zero_grad()
