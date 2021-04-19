@@ -164,7 +164,7 @@ def main():
     print(model)
 
     # Data Parallel to use multi-gpu
-    model = nn.DataParallel(model).to(device)
+    # model = nn.DataParallel(model).to(device)
 
     optimizer = optim.Adam(filter(
         lambda x: x.requires_grad, model.module.parameters()), lr=args.lr)

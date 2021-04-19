@@ -15,8 +15,8 @@ import numpy as np
 from extractor import FeatureExtractor
 
 parser = argparse.ArgumentParser()
-audio_dir="/zooper2/tinydancer/DanceRevolution/data/audio/hiphop_1min"
-json_dir="/zooper2/tinydancer/DanceRevolution/data/json/hiphop_1min"
+audio_dir="/zooper2/tinydancer/DanceRevolution/data/audio/"
+json_dir="/zooper2/tinydancer/DanceRevolution/data/json/"
 parser.add_argument('--input_audio_dir', type=str, default=audio_dir)
 parser.add_argument('--input_dance_dir', type=str, default=json_dir)
 
@@ -206,7 +206,7 @@ if __name__ == '__main__':
     dance_dirs = os.listdir(args.input_dance_dir)
     for music_dir in music_dirs:
         if music_dir in dance_dirs and music_dir != ".DS_Store":
-      
+            
             musics = extract_acoustic_feature(os.path.join(args.input_audio_dir, music_dir))
             dances = load_dance_data(os.path.join(args.input_dance_dir, music_dir),
                              remove_face_keypoints=False,

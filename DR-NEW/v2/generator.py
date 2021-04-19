@@ -45,7 +45,7 @@ class Generator(object):
                       device=device)
 
         # Data Parallel to use multi-gpu
-        model = nn.DataParallel(model)
+        # model = nn.DataParallel(model)
 
         model.load_state_dict(checkpoint['model'])
         # self.log.log.info('[Info] Trained model loaded.')
