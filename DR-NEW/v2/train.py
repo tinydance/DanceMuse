@@ -114,6 +114,10 @@ def main():
                         default=torch.cuda.is_available(),
                         help='whether to use GPU acceleration.')
 
+    ##Add Parser for pre-existing weights
+    parser.add_argument('--pretrained_path', type=str, default=None,
+                        help='path to pretrained model')
+
     args = parser.parse_args()
     args.d_model = args.frame_emb_size
 
@@ -140,28 +144,31 @@ def main():
 
     device = torch.device('cuda' if args.cuda else 'cpu')
 
-    encoder = Encoder(max_seq_len=args.max_seq_len,
-                      input_size=args.d_frame_vec,
-                      d_word_vec=args.frame_emb_size,
-                      n_layers=args.n_layers,
-                      n_head=args.n_head,
-                      d_k=args.d_k,
-                      d_v=args.d_v,
-                      d_model=args.d_model,
-                      d_inner=args.d_inner,
-                      dropout=args.dropout)
+    if args.pretrained_path is None:
+        encoder = Encoder(max_seq_len=args.max_seq_len,
+                          input_size=args.d_frame_vec,
+                          d_word_vec=args.frame_emb_size,
+                          n_layers=args.n_layers,
+                          n_head=args.n_head,
+                          d_k=args.d_k,
+                          d_v=args.d_v,
+                          d_model=args.d_model,
+                          d_inner=args.d_inner,
+                          dropout=args.dropout)
 
-    decoder = Decoder(input_size=args.d_pose_vec,
-                      d_word_vec=args.pose_emb_size,
-                      hidden_size=args.d_inner,
-                      encoder_d_model=args.d_model,
-                      dropout=args.dropout)
+        decoder = Decoder(input_size=args.d_pose_vec,
+                          d_word_vec=args.pose_emb_size,
+                          hidden_size=args.d_inner,
+                          encoder_d_model=args.d_model,
+                          dropout=args.dropout)
 
-    model = Model(encoder, decoder,
-                  condition_step=args.condition_step,
-                  sliding_windown_size=args.sliding_windown_size,
-                  lambda_v=args.lambda_v,
-                  device=device)
+        model = Model(encoder, decoder,
+                      condition_step=args.condition_step,
+                      sliding_windown_size=args.sliding_windown_size,
+                      lambda_v=args.lambda_v,
+                      device=device)
+    else:
+        model.load_state_dict(torch.load(pretrained_path)['model'])
 
     print(model)
 
