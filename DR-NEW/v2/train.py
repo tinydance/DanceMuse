@@ -134,6 +134,8 @@ def main():
         args.train_dir, 
         interval=args.seq_len,
         data_type=args.data_type)
+    print(f"train_music data: {train_music_data}")
+
     training_data = prepare_dataloader(train_music_data, train_dance_data, args)
 
     device = torch.device('cuda' if args.cuda else 'cpu')
@@ -174,6 +176,9 @@ def main():
 
 
 def prepare_dataloader(music_data, dance_data, args):
+    print("going into prepare")
+    print(f"music data {music_data}")
+    print(f"dance_data {dance_data}")
     data_loader = torch.utils.data.DataLoader(
         DanceDataset(music_data, dance_data),
         num_workers=8,
