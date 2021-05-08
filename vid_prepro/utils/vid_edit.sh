@@ -60,14 +60,24 @@ edit_video(){
         #   *set video duration to $duration seconds
         #   *output into a filename_mod.mp4 file
         filename="${video##*/}"
-        edited_vid="${edited_dir}${filename%.*}_m.mp4"
-
-        ffmpeg  -n\
-                -loglevel 24\
-                -i "${video}"\
-                -r "${FSP}"\
-                -t "${DURATION}"\
-                "${edited_vid}"
+        ffmpeg -i "${video}" -filter:v fps=fps=30 "${filename}_30fps.mp4"
+        
+        original_duration=$(ffprobe -i "${filename}_30fps.mp4" -show_entries format=duration -v quiet -of csv="p=0")
+        num_chunks=$((${original_duration} % ${DURATION}))
+        start_time=0
+        for i in{1..${num_chunks}}
+        do
+            edited_vid="${edited_dir}${filename%.*}_m.avi"
+            ffmpeg -i "${filename}_30fps.mp4" -ss "${start_time}" -t "${DURATION}" -c copy "${edited_vid}"
+            start_time=$((${start_time} + ${DURATION}))
+        done
+        rm "${filename}_30fps.mp4"
+        # ffmpeg  -n\
+        #         -loglevel 24\
+        #         -i "${video}"\
+        #         -r "${FSP}"\
+        #         -t "${DURATION}"\
+        #         "${edited_vid}"
 }
 
 # Go to work dir
