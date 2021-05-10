@@ -6,7 +6,7 @@
 #SBATCH --ntasks=1
 #SBATCH --gres-flags=enforce-binding
 #SBATCH --nodes=1-1
-#SBATCH --mem=16gb
+#SBATCH --mem=32gb
 
 echo "Starting slurm scipt"
 echo "CUDA DEVICES: $CUDA_VISIBLE_DEVICES"

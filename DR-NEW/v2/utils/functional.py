@@ -60,6 +60,20 @@ def load_test_data(data_dir, data_type='2D'):
 
     return music_data, dance_data, fnames
 
+def load_test_data_audio_only(data_dir, data_type='2D'):
+    music_data = []
+    fnames = sorted(os.listdir(data_dir))
+    print(fnames)
+    # fnames = fnames[:60]  # For debug
+    for fname in fnames:
+        path = os.path.join(data_dir, fname)
+        with open(path) as f:
+            sample_dict = json.loads(f.read())
+            np_music = np.array(sample_dict['music_array'])
+            music_data.append(np_music)
+
+    return music_data, fnames
+
 
 def load_json_data(data_file, max_seq_len=150):
     music_data = []

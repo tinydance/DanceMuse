@@ -1,4 +1,4 @@
-#!/bin/bash
+so #!/bin/bash
 #
 #SBATCH --job-name=DANCE_REVOLUTION
 #SBATCH --output=/zooper2/tinydancer/DanceRevolution/train_log/full_model2.txt

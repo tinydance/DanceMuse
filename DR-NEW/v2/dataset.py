@@ -37,3 +37,4 @@ class DanceDataset(Dataset):
             return self.musics[index], self.dances[index]
         else:
             return self.musics[index]
+

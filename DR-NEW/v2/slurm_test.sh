@@ -1,4 +1,24 @@
-#! /bin/bash
+#!/bin/bash
+#
+#SBATCH --job-name=DANCE_REVOLUTION
+#SBATCH --output=/zooper2/tinydancer/DanceMuse/DR-NEW/v2/logs/test-log.log
+#SBATCH --gres=gpu:1
+#SBATCH --ntasks=1
+#SBATCH --gres-flags=enforce-binding
+#SBATCH --nodes=1-1
+#SBATCH --mem=8gb
+
+echo "Starting slurm scipt"
+echo "CUDA DEVICES: $CUDA_VISIBLE_DEVICES"
+
+
+# export CUDA_VISIBLE_DEVICES=3
+
+export CUDA_HOME="/usr/local/cuda-10.0"
+export PATH="$PATH:/usr/local/cuda-10.0/bin"
+export LD_LIBRARY_PATH="/usr/local/cuda-10.0/lib64"
+export PATH="$PATH:/usr/local/bin/conda"
+
 model="/zooper2/tinydancer/DanceMuse/DR-NEW/v2/checkpoints/layers2_win500_schedule100_condition10_detach/epoch_4000.pt"
 output_dir="/zooper2/tinydancer/DanceMuse/DR-NEW/hiphop-4k-outputs"
 visualize_dir="/zooper2/tinydancer/DanceMuse/DR-NEW/hiphop-4k-visualizations"
@@ -15,4 +35,3 @@ do
 	 -y ${visualize_dir}/${filename}.mp4
 	echo "make video ${filename}"
 done
-
