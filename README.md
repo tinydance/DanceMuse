@@ -12,7 +12,7 @@ See project website [here](https://tinydance.github.io/).
 
 ## Using DanceMuse
 <p align="center">
-  <img src='/imgs/use_dancemuse.svg' width=530>
+  <img src='/imgs/use_dancemuse.svg' width=600>
 </p>
 DanceMuse does not create art, but aims at giving suggestions and helping artists explore dance and audio in a new way. We propose a 4 step process of interacting with the system to allow artists iteratively refine their ideas and thoughts, shown in the figure above. 
 
