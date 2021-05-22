@@ -18,4 +18,6 @@ DanceMuse does not create art, but aims at giving suggestions and helping artist
 
 
 ## Dance Outputs
-![ballet-output](https://github.com/tinydance/tinydance.github.io/blob/main/img/ballet-sample.gif)
+<p align="center">
+  <img src='https://github.com/tinydance/tinydance.github.io/blob/main/img/ballet-sample.gif' width=600>
+</p>
